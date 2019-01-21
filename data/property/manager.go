@@ -1,7 +1,9 @@
 package property
 
+import "github.com/project-flogo/core/data"
+
 func init() {
-	SetDefaultManager(NewManager(make(map[string]interface{})))
+	SetDefaultManager(NewManager(make(Properties)))
 }
 
 var defaultManager *Manager
@@ -14,19 +16,24 @@ func DefaultManager() *Manager {
 	return defaultManager
 }
 
-func NewManager(properties map[string]interface{}) *Manager {
+func NewManager(properties Properties) *Manager {
 
 	manager := &Manager{properties: properties}
 	return manager
 }
 
 type Manager struct {
-	properties map[string]interface{}
+	properties Properties
 }
 
 func (m *Manager) GetProperty(name string) (interface{}, bool) {
-	val, exists := m.properties[name]
-	return val, exists
+	var value interface{}
+
+	property, exists := m.properties[name]
+	if exists {
+		value = property.Value
+	}
+	return value, exists
 }
 
 func (m *Manager) Finalize(processors ...PostProcessor) error {
@@ -38,4 +45,11 @@ func (m *Manager) Finalize(processors ...PostProcessor) error {
 	return nil
 }
 
-type PostProcessor func(properties map[string]interface{}) error
+type PostProcessor func(properties Properties) error
+
+type Property struct {
+	Value    interface{}
+	DataType data.Type
+}
+
+type Properties map[string]*Property

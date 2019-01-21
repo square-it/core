@@ -31,6 +31,8 @@ func ToType(value interface{}, dataType data.Type) (interface{}, error) {
 		coerced, err = ToAny(value)
 	case data.TypeString:
 		coerced, err = ToString(value)
+	case data.TypeSecret:
+		coerced, err = ToString(value)
 	case data.TypeInt:
 		coerced, err = ToInt(value)
 	case data.TypeInt32:

@@ -26,9 +26,9 @@ func New(config *Config, runner action.Runner, options ...Option) (*App, error) 
 		registerImport(anImport)
 	}
 
-	properties := make(map[string]interface{}, len(config.Properties))
+	properties := make(property.Properties, len(config.Properties))
 	for _, attr := range config.Properties {
-		properties[attr.Name()] = attr.Value()
+		properties[attr.Name()] = &property.Property{attr.Value(), attr.Type()}
 	}
 
 	app.propManager = property.NewManager(properties)

@@ -20,6 +20,7 @@ const (
 
 	// simple types
 	TypeString  // string
+	TypeSecret  // secret
 	TypeInt     // int
 	TypeInt32   // int32
 	TypeInt64   // int64
@@ -72,6 +73,8 @@ func ToTypeEnum(typeStr string) (Type, error) {
 		return TypeAny, nil
 	case "string":
 		return TypeString, nil
+	case "secret":
+		return TypeSecret, nil
 	case "int", "integer":
 		return TypeInt, nil
 	case "int32":

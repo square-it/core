@@ -1,30 +1,32 @@
 package secret
 
 import (
-	"strings"
+	"github.com/project-flogo/core/data"
+	"github.com/project-flogo/core/data/property"
 )
 
 func resolveSecretValue(encrypted string) (string, error) {
-	encodedValue := string(encrypted[7:])
-	decodedValue, err := GetSecretValueHandler().DecodeValue(encodedValue)
+	decodedValue, err := GetSecretValueHandler().DecodeValue(encrypted)
 	if err != nil {
 		return "", err
 	}
 	return decodedValue, nil
 }
 
-func PropertyProcessor(properties map[string]interface{}) error {
+func PropertyProcessor(properties property.Properties) error {
 
 	for key, value := range properties {
+		if value == nil || value.DataType != data.TypeSecret {
+			continue
+		}
 
-		if strVal, ok := value.(string); ok && strings.HasPrefix(strVal, "SECRET:") {
-
+		if strVal, ok := value.Value.(string); ok {
 			// Resolve secret value
 			newVal, err := resolveSecretValue(strVal)
 			if err != nil {
 				return err
 			}
-			properties[key] = newVal
+			properties[key].Value = newVal
 		}
 	}
 
